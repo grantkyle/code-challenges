@@ -13,47 +13,32 @@ const FareWidget = (props) => {
     { label: "Evening or Weekends", value: "evening_weekend" },
     { label: "Any TIME!", value: "advance_purchase" },
   ];
+  const [totalFare, setTotalFare] = useState(0);
 
   const zoneOptions = fareData.zones.map(({ name, zone }) => {
     return { label: name, value: zone };
   });
 
-  //   const selectedZone = fareData.zones.find(
-  //     (item) => item.zoneOptions === zoneOptions
-  //   );
-  //   const selectedFare = selectedZone.fares.find(
-  //     (item) =>
-  //       item.timeOptions.value === timeOptions.value &&
-  //       item.radioValue === radioValue
-  //   );
-
-  //   console.log("currentZone", selectedFare);
-
   const parseFareData = JSON.parse(JSON.stringify(fareData));
-
-  //   console.log(
-  //     "fares",
-  //     parseFareData.zones.find(({ zone }) => {
-  //       return showZoneOptions.value === zone;
-  //     })
-  //   );
 
   const handleNumberOfFares = (value) => {
     setNumberOfFares(value);
   };
 
   useEffect(() => {
-    if (zoneOptions && timeOptions && radioValue && numberOfFares) {
-      return parseFareData.zones
-        .find(({ zone }) => {
-          return showZoneOptions.value === zone;
-        })
-        .fares.find(
-          ({ timeOfTrip, advanceOrKiosk }) =>
-            timeOfTrip === timeOptions && advanceOrKiosk === radioValue
-        );
+    if (showZoneOptions && selectedTimeOption && radioValue && numberOfFares) {
+      setTotalFare(
+        parseFareData.zones
+          .find(({ zone }) => {
+            return showZoneOptions.value === zone;
+          })
+          .fares.find(
+            ({ purchase, type }) =>
+              radioValue === purchase && type === selectedTimeOption
+          ).price * numberOfFares
+      );
     }
-  }, [timeOptions, radioValue, numberOfFares]);
+  }, [showZoneOptions, selectedTimeOption, radioValue, numberOfFares]);
 
   return (
     <div>
